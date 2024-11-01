@@ -29,19 +29,7 @@ const upload = multer({
     limits: { fileSize: 10 * 1024 * 1024 },
 });
 
-const authenticate = async (req, res, next) => {
-    const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
-    if (!token) {
-        return res.status(401).json({ message: 'Unauthorized' });
-    }
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = await User.findById(decoded.id);
-        next();
-    } catch (error) {
-        return res.status(401).json({ message: 'Invalid token' });
-    }
-};
+
 
 const uploadFile = async (req, res) => {
     if (!req.file) {
@@ -49,13 +37,14 @@ const uploadFile = async (req, res) => {
     }
 
     const { tags } = req.body;
+    
 
     try {
         const newFile = new File({
             name: req.file.originalname,
             path: req.file.path,
             tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
-            uploadedBy: req.user._id,
+            uploadedBy: req.user.id,
             shareableLink: uuidv4(),
             downloads: 0,
         });
@@ -80,6 +69,7 @@ const downloadFile = async (req, res) => {
         }
 
         file.downloads += 1;
+        file.views += 1; 
         await file.save();
 
         res.download(file.path, file.name);
@@ -96,7 +86,8 @@ const shareFile = async (req, res) => {
             return res.status(404).json({ message: 'File not found' });
         }
 
-        file.downloads += 1;
+        file.shares += 1; 
+        file.downloads += 1; 
         await file.save();
 
         res.download(file.path, file.name);
@@ -105,6 +96,7 @@ const shareFile = async (req, res) => {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 };
+
 
 const getAllFiles = async (req, res) => {
     try {
@@ -153,9 +145,13 @@ const getFileByShareableLink = async (req, res) => {
     }
 };
 
+
+
+
+
+
 module.exports = {
     upload,
-    authenticate,
     uploadFile,
     downloadFile,
     shareFile,

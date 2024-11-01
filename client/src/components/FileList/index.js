@@ -50,6 +50,9 @@ const FileList = () => {
                         </div>
                         <p className="file-name">{file.name}</p>
                         <p className="file-tags">Tags: {file.tags ? file.tags.join(', ') : 'None'}</p>
+                        <p className="file-stats">
+                            Views: {file.views} | Shares: {file.shares} {/* Add views and shares */}
+                        </p>
 
                         <FaEllipsisH
                             onClick={() => toggleDropdown(file._id)}
@@ -73,7 +76,7 @@ const FileList = () => {
                                     Share
                                 </button>
                                 <button onClick={() => handleDelete(file._id)}>Delete</button>
-                                <button onClick={() => alert(`Edit file: ${file.name}`)}>Edit</button>
+                                {/* <button onClick={() => alert(`Edit file: ${file.name}`)}>Edit</button> */}
                             </div>
                         )}
                     </li>
@@ -81,6 +84,7 @@ const FileList = () => {
             </Draggable>
         );
     };
+
 
     const renderFileList = () => (
         <DragDropContext onDragEnd={handleDragEnd}>

@@ -1,7 +1,7 @@
 .file-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px; /* Space between items */
+    gap: 16px;
     list-style-type: none;
     padding: 0;
 }
@@ -10,88 +10,90 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: calc(25% - 16px); /* 4 items per row */
+    width: calc(23% - 16px);
     border: 1px solid #ccc;
     padding: 10px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    position: relative; /* For positioning delete/share icons */
-    transition: box-shadow 0.2s ease; /* Smooth transition for hover effect */
+    position: relative;
+    transition: box-shadow 0.2s ease;
+    justify-content: space-between; /* Ensure space between elements */
+    height: 250px; /* Set a fixed height to accommodate elements */
 }
 
 .file-item:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow on hover for depth */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .file-thumbnail {
     width: 100%;
     height: auto;
-    max-height: 100px; /* Set a max height */
-    border-radius: 4px; /* Slight rounding of thumbnails */
-    object-fit: cover; /* Cover to maintain aspect ratio */
+    max-height: 100px;
+    border-radius: 4px;
+    object-fit: cover;
 }
 
 .file-video {
     width: 100%;
     height: auto;
-    max-height: 100px; /* Set a max height */
-    border-radius: 4px; /* Slight rounding of video */
+    max-height: 100px;
+    border-radius: 4px;
 }
 
 .file-name {
     font-weight: bold;
     margin: 8px 0 4px 0;
-    text-align: center; /* Center text for better alignment */
+    text-align: center;
 }
 
 .file-tags {
     font-size: 0.9em;
     color: #555;
-    text-align: center; /* Center text for better alignment */
+    text-align: center;
 }
 
 .file-actions {
     display: flex;
-    flex-direction: column; /* Stack the buttons vertically */
-    gap: 8px; /* Space between action icons and delete button */
+    flex-direction: column;
+    gap: 8px;
     margin-top: 8px;
-    align-items: center; /* Center align items */
+    align-items: center;
 }
 
 .action-icon {
     cursor: pointer;
-    position: absolute; /* Positioning for ellipsis */
-    top: 10px; /* Distance from the top */
-    right: 10px; /* Distance from the right */
-    z-index: 1; /* Ensure it appears above other elements */
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1;
 }
 
 .dropdown-menu {
-    display: none; /* Initially hidden */
-    flex-direction: column; /* Stack dropdown items vertically */
+    display: none;
+    flex-direction: column;
     position: absolute;
-    right: 10px; /* Align to the right of the ellipsis */
-    top: 30px; /* Position below the ellipsis */
-    background: white; /* Background color for the dropdown */
-    border: 1px solid #ccc; /* Border for the dropdown */
-    border-radius: 4px; /* Rounded corners */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
-    z-index: 1000; /* Ensure dropdown is above other content */
+    right: 10px;
+    top: 30px;
+    background: #000;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
 }
 
 .dropdown-menu button {
     display: block;
-    width: 100%; /* Full width for buttons */
+    width: 100%;
     border: none;
     background: none;
-    padding: 8px 16px; /* Padding for buttons */
+    padding: 8px 16px;
     cursor: pointer;
-    text-align: left; /* Align text to the left */
-    transition: background 0.2s; /* Smooth transition for background color */
+    text-align: left;
+    transition: background 0.2s;
 }
 
 .dropdown-menu button:hover {
-    background: #f0f0f0; /* Change background on hover */
+    background: #000;
 }
 
 .delete-button {
@@ -101,26 +103,19 @@
     padding: 5px 10px;
     border-radius: 4px;
     cursor: pointer;
-    transition: background 0.2s; /* Smooth transition for button color */
+    transition: background 0.2s;
 }
 
 .delete-button:hover {
-    background-color: darkred; /* Darker shade on hover */
-}
-
-.dropdown-menu {
-    display: none; /* Initially hidden */
-    flex-direction: column; /* Stack dropdown items vertically */
-    position: absolute;
-    right: 10px; /* Align to the right of the ellipsis */
-    top: 30px; /* Position below the ellipsis */
-    background: white; /* Background color for the dropdown */
-    border: 1px solid #ccc; /* Border for the dropdown */
-    border-radius: 4px; /* Rounded corners */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
-    z-index: 1000; /* Ensure dropdown is above other content */
+    background-color: darkred;
 }
 
 .file-item .dropdown-menu {
-    display: block; /* Display dropdown if the item is active */
+    display: block;
+}
+
+.file-stats {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: auto; /* Push stats to the bottom */
 }

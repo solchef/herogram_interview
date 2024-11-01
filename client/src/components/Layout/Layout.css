@@ -1,9 +1,8 @@
-/* src/components/Layout.css */
-
 body {
     margin: 0;
     font-family: 'Arial', sans-serif;
-    background-color: #f8f9fa; /* Light background color for the app */
+    background-color: #121212;
+    color: #e0e0e0;
 }
 
 .layout {
@@ -13,50 +12,48 @@ body {
 }
 
 .main-content {
-    flex: 1; /* This will allow the main content area to grow and fill the space */
+    flex: 1;
     padding: 20px;
-    background-color: #ffffff; /* White background for main content */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    border-radius: 8px; /* Rounded corners */
-    margin: 20px; /* Margin around the main content */
+    background-color: #1e1e1e;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    margin: 20px;
 }
 
 .footer {
-    background-color: #343a40; /* Dark footer background */
-    color: white; /* White text color for contrast */
+    background-color: #212121;
+    color: #bdbdbd;
     text-align: center;
     padding: 10px 0;
 }
 
 .footer p {
-    margin: 0; /* Remove default margin */
+    margin: 0;
 }
 
-/* Navbar Styles */
 .navbar {
-    background-color: #007bff; /* Blue background for navbar */
+    background-color: #333;
     padding: 10px;
-    color: white;
+    color: #bdbdbd;
 }
 
 .navbar a {
-    color: white; /* White link color */
-    text-decoration: none; /* Remove underline from links */
-    margin-right: 15px; /* Space between links */
+    color: #bdbdbd;
+    text-decoration: none;
+    margin-right: 15px;
 }
 
 .navbar a:hover {
-    text-decoration: underline; /* Underline effect on hover */
+    color: #ffffff;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     .layout {
         padding: 0;
     }
 
     .main-content {
-        margin: 10px; /* Reduce margin on small screens */
-        padding: 15px; /* Reduce padding on small screens */
+        margin: 10px;
+        padding: 15px;
     }
 }

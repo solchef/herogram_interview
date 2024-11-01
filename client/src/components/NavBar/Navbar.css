@@ -1,48 +1,89 @@
-/* src/components/NavBar.css */
-
+/* Navbar.css */
 nav {
     background-color: #333;
-    padding: 1rem;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .navbar-content {
     display: flex;
-    justify-content: space-between; /* Space between title and menu items */
-    align-items: center; /* Center items vertically */
+    justify-content: space-between;
+    align-items: center; /* Centers items vertically */
 }
 
 nav h1 {
     color: #fff;
     margin: 0;
+    font-size: 1.8rem;
 }
 
 nav ul {
     list-style: none;
     padding: 0;
     display: flex;
-    gap: 1rem; /* Adjust the spacing between the links */
+    gap: 2rem;
+    align-items: center; /* Aligns the list items with the button */
 }
 
 nav a {
     color: #fff;
     text-decoration: none;
-    transition: color 0.3s;
+    font-size: 1.1rem;
+    position: relative;
 }
 
-nav a:hover {
-    color: #00bcd4; /* Change color on hover */
+nav a::after {
+    content: '';
+    display: block;
+    height: 2px;
+    background: #00bcd4;
+    transition: width 0.3s ease, left 0.3s ease;
+    width: 0;
+    left: 50%;
+    bottom: -5px;
+    position: absolute;
+    transition: all 0.3s ease;
+}
+
+nav a:hover::after {
+    width: 100%;
+    left: 0;
 }
 
 nav button {
-    background-color: #ff4d4d; /* Logout button color */
+    background-color: #ff4d4d;
     color: white;
     border: none;
     padding: 0.5rem 1rem;
     cursor: pointer;
     border-radius: 4px;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.3s;
+    font-size: 1.1rem;
+    display: flex; /* Ensures button height aligns with text */
+    align-items: center; /* Centers text inside button vertically */
+    margin-left: 1rem; /* Space between links and the button */
 }
 
 nav button:hover {
-    background-color: #ff1a1a; /* Change button color on hover */
+    background-color: #ff1a1a;
+    transform: scale(1.05);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .navbar-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    nav ul {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+    }
+
+    nav h1 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
 }
