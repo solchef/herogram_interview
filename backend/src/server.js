@@ -3,6 +3,7 @@ const cors = require('cors');
 const connectDB = require('./config/db'); 
 const userRoutes = require('./routes/user'); 
 const fileRoutes = require('./routes/file'); 
+const authenticate = require('./middleware/authenticationMiddleware'); // Import the authentication middleware
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,9 +20,9 @@ app.get('/', (req, res) => {
     res.send('Welcome to the File Management API!'); // Welcome message
 });
 
-// Use user and file routes
-app.use('/api/users', userRoutes); // All user routes will be prefixed with /api/users
-app.use('/api/files', fileRoutes); // All file routes will be prefixed with /api/files
+app.use('/api/users', userRoutes); 
+
+app.use('/api/files', authenticate, fileRoutes); 
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

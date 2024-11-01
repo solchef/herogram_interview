@@ -14,7 +14,7 @@ const Login = () => {
         e.preventDefault();
         try {
             const response = await axios.post(`${process.env.REACT_APP_REACT_APP_BACKEND_URL}/api/users/login`, { email, password });
-            login(response.data.token); // Call the login function from context
+            login(response.data.token); 
             navigate('/upload'); // Redirect to the upload page on successful login
         } catch (error) {
             console.error('Error logging in:', error);
