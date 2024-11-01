@@ -1,38 +1,126 @@
 .file-list {
-    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px; /* Space between items */
+    list-style-type: none;
     padding: 0;
 }
 
 .file-item {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    margin-bottom: 10px;
-    padding: 10px;
+    width: calc(25% - 16px); /* 4 items per row */
     border: 1px solid #ccc;
-    border-radius: 5px;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative; /* For positioning delete/share icons */
+    transition: box-shadow 0.2s ease; /* Smooth transition for hover effect */
 }
 
-.file-thumbnail, .file-video {
-    width: 100px; /* Set width as per your layout */
+.file-item:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow on hover for depth */
+}
+
+.file-thumbnail {
+    width: 100%;
     height: auto;
-    margin-right: 10px;
+    max-height: 100px; /* Set a max height */
+    border-radius: 4px; /* Slight rounding of thumbnails */
+    object-fit: cover; /* Cover to maintain aspect ratio */
+}
+
+.file-video {
+    width: 100%;
+    height: auto;
+    max-height: 100px; /* Set a max height */
+    border-radius: 4px; /* Slight rounding of video */
 }
 
 .file-name {
-    flex-grow: 1; /* Allow the name to take available space */
+    font-weight: bold;
+    margin: 8px 0 4px 0;
+    text-align: center; /* Center text for better alignment */
+}
+
+.file-tags {
+    font-size: 0.9em;
+    color: #555;
+    text-align: center; /* Center text for better alignment */
 }
 
 .file-actions {
     display: flex;
-    align-items: center;
+    flex-direction: column; /* Stack the buttons vertically */
+    gap: 8px; /* Space between action icons and delete button */
+    margin-top: 8px;
+    align-items: center; /* Center align items */
 }
 
 .action-icon {
-    margin-right: 10px;
     cursor: pointer;
+    position: absolute; /* Positioning for ellipsis */
+    top: 10px; /* Distance from the top */
+    right: 10px; /* Distance from the right */
+    z-index: 1; /* Ensure it appears above other elements */
+}
+
+.dropdown-menu {
+    display: none; /* Initially hidden */
+    flex-direction: column; /* Stack dropdown items vertically */
+    position: absolute;
+    right: 10px; /* Align to the right of the ellipsis */
+    top: 30px; /* Position below the ellipsis */
+    background: white; /* Background color for the dropdown */
+    border: 1px solid #ccc; /* Border for the dropdown */
+    border-radius: 4px; /* Rounded corners */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
+    z-index: 1000; /* Ensure dropdown is above other content */
+}
+
+.dropdown-menu button {
+    display: block;
+    width: 100%; /* Full width for buttons */
+    border: none;
+    background: none;
+    padding: 8px 16px; /* Padding for buttons */
+    cursor: pointer;
+    text-align: left; /* Align text to the left */
+    transition: background 0.2s; /* Smooth transition for background color */
+}
+
+.dropdown-menu button:hover {
+    background: #f0f0f0; /* Change background on hover */
 }
 
 .delete-button {
-    color: red;
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
     cursor: pointer;
+    transition: background 0.2s; /* Smooth transition for button color */
+}
+
+.delete-button:hover {
+    background-color: darkred; /* Darker shade on hover */
+}
+
+.dropdown-menu {
+    display: none; /* Initially hidden */
+    flex-direction: column; /* Stack dropdown items vertically */
+    position: absolute;
+    right: 10px; /* Align to the right of the ellipsis */
+    top: 30px; /* Position below the ellipsis */
+    background: white; /* Background color for the dropdown */
+    border: 1px solid #ccc; /* Border for the dropdown */
+    border-radius: 4px; /* Rounded corners */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
+    z-index: 1000; /* Ensure dropdown is above other content */
+}
+
+.file-item .dropdown-menu {
+    display: block; /* Display dropdown if the item is active */
 }

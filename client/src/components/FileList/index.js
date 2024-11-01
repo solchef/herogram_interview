@@ -1,32 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+// src/components/FileList.js
+import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { FaEllipsisH } from 'react-icons/fa';
 import './FileList.css';
+import { useFiles } from '../../utils/useFiles';
+import { renderFilePreview } from '../../utils/fileUtils';
+import ShareableLinkPopup from '../ShareableLinkPopup';
 
 const FileList = () => {
-    const [files, setFiles] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const { files, loading, error, handleShare, reorderFileList, handleDelete } = useFiles();
+    const [activeFileId, setActiveFileId] = useState(null);
+    const [isPopupOpen, setPopupOpen] = useState(false);
+    const [link, setLink] = useState('');
 
-    useEffect(() => {
-        const fetchFiles = async () => {
-            try {
-                const response = await axios.get(`${process.env.REACT_APP_REACT_APP_BACKEND_URL}/api/files`, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`,
-                    },
-                });
-                setFiles(response.data);
-            } catch (error) {
-                console.error('Error fetching files:', error);
-                setError('Failed to load files. Please check your connection and try again.');
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchFiles();
-    }, []);
+    const closePopup = () => setPopupOpen(false);
 
     const handleDragEnd = async (result) => {
         if (!result.destination) return;
@@ -35,52 +22,20 @@ const FileList = () => {
         const [movedFile] = reorderedFiles.splice(result.source.index, 1);
         reorderedFiles.splice(result.destination.index, 0, movedFile);
 
-        setFiles(reorderedFiles);
-
-        try {
-            await axios.put(`${process.env.REACT_APP_REACT_APP_BACKEND_URL}/api/files/reorder`, reorderedFiles, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
-        } catch (error) {
-            console.error('Error saving new file order:', error);
-            setError('Failed to save new file order. Please try again.');
-        }
+        await reorderFileList(reorderedFiles);
     };
 
-    const handleShare = (file) => {
-        alert(`Sharing file: ${file.name}`);
-    };
-
-    const handleDelete = async (fileId) => {
-        const confirmed = window.confirm('Are you sure you want to delete this file?');
-        if (confirmed) {
-            try {
-                await axios.delete(`${process.env.REACT_APP_REACT_APP_BACKEND_URL}/api/files/${fileId}`, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`,
-                    },
-                });
-                setFiles(files.filter(file => file._id !== fileId));
-            } catch (error) {
-                console.error('Error deleting file:', error);
-                setError('Failed to delete file. Please try again.');
-            }
-        }
+    const toggleDropdown = (fileId) => {
+        setActiveFileId(activeFileId === fileId ? null : fileId);
     };
 
     const renderLoading = () => <p className="loading-message">Loading files...</p>;
 
     const renderError = () => <p className="error-message">{error}</p>;
 
-    const getFileExtension = (filename) => {
-        return filename.split('.').pop().toLowerCase();
-    };
-    
     const renderFileItem = (file, index) => {
-        const extension = getFileExtension(file.name);
-    
+        const isActive = activeFileId === file._id;
+
         return (
             <Draggable key={file._id} draggableId={file._id} index={index}>
                 {(provided) => (
@@ -90,23 +45,35 @@ const FileList = () => {
                         {...provided.dragHandleProps}
                         className="file-item"
                     >
-                        {['jpg', 'jpeg', 'png', 'gif'].includes(extension) ? (
-                            <img src={file.thumbnail} alt={file.name} className="file-thumbnail" />
-                        ) : ['mp4', 'avi', 'mov'].includes(extension) ? (
-                            <video controls className="file-video" src={file.path} alt={file.name} />
-                        ) : (
-                            <p className="file-unknown">File type not supported</p>
-                        )}
-    
+                        <div className="file-preview">
+                            {renderFilePreview(file)}
+                        </div>
                         <p className="file-name">{file.name}</p>
                         <p className="file-tags">Tags: {file.tags ? file.tags.join(', ') : 'None'}</p>
-    
-                        {file.uploadedBy === localStorage.getItem('userId') && (
-                            <div className="file-actions">
-                                <FaEllipsisH onClick={() => handleShare(file)} className="action-icon" title="Share" />
-                                <button className="delete-button" onClick={() => handleDelete(file._id)}>
-                                    Delete
+
+                        <FaEllipsisH
+                            onClick={() => toggleDropdown(file._id)}
+                            className="action-icon"
+                            title="More options"
+                        />
+
+                        {isActive && (
+                            <div className="dropdown-menu">
+                                <button
+                                    onClick={async () => {
+                                        try {
+                                            const generatedLink = await handleShare(file._id);
+                                            setLink(generatedLink);
+                                            setPopupOpen(true);
+                                        } catch (error) {
+                                            alert(error.message);
+                                        }
+                                    }}
+                                >
+                                    Share
                                 </button>
+                                <button onClick={() => handleDelete(file._id)}>Delete</button>
+                                <button onClick={() => alert(`Edit file: ${file.name}`)}>Edit</button>
                             </div>
                         )}
                     </li>
@@ -114,14 +81,13 @@ const FileList = () => {
             </Draggable>
         );
     };
-    
 
     const renderFileList = () => (
         <DragDropContext onDragEnd={handleDragEnd}>
             <Droppable droppableId="files">
                 {(provided) => (
                     <ul ref={provided.innerRef} {...provided.droppableProps} className="file-list">
-                        {files.map((file, index) => renderFileItem(file, index))}
+                        {files.map(renderFileItem)}
                         {provided.placeholder}
                     </ul>
                 )}
@@ -129,13 +95,10 @@ const FileList = () => {
         </DragDropContext>
     );
 
-    if (loading) return renderLoading();
-    if (error) return renderError();
-
     return (
-        <div>
-            <h2>Your Files</h2>
-            {renderFileList()}
+        <div className="file-list-container">
+            {isPopupOpen && <ShareableLinkPopup link={link} onClose={closePopup} />}
+            {loading ? renderLoading() : error ? renderError() : renderFileList()}
         </div>
     );
 };
