@@ -1,7 +1,7 @@
-// src/components/FileList.js
 import React, { useState } from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import Draggable from 'react-draggable';
 import { FaEllipsisH } from 'react-icons/fa';
+import axios from 'axios';
 import './FileList.css';
 import { useFiles } from '../../utils/useFiles';
 import { renderFilePreview } from '../../utils/fileUtils';
@@ -15,14 +15,33 @@ const FileList = () => {
 
     const closePopup = () => setPopupOpen(false);
 
-    const handleDragEnd = async (result) => {
-        if (!result.destination) return;
+    const handleDragStop = async (data, index) => {
+        const updatedFiles = [...files];
+        const draggedFile = updatedFiles.splice(index, 1)[0];
 
-        const reorderedFiles = Array.from(files);
-        const [movedFile] = reorderedFiles.splice(result.source.index, 1);
-        reorderedFiles.splice(result.destination.index, 0, movedFile);
+        const dragY = data.y + (data.node.offsetHeight / 2);
+        const newIndex = Math.min(
+            updatedFiles.length,
+            Math.max(0, Math.floor(dragY / data.node.offsetHeight))
+        );
 
-        await reorderFileList(reorderedFiles);
+        updatedFiles.splice(newIndex, 0, draggedFile);
+        reorderFileList(updatedFiles);
+
+        // if (window.confirm("Do you want to save the new order of files?")) {
+            const fileIdsInOrder = updatedFiles.map(file => file._id);
+
+            try {
+                await axios.post(`${process.env.REACT_APP_REACT_APP_BACKEND_URL}/api/files/reorder`, {
+                    fileIds: fileIdsInOrder,
+                });
+            } catch (error) {
+                console.error('Error reordering files:', error);
+                reorderFileList(files);
+            }
+        // } else {
+        //     reorderFileList(files);
+        // }
     };
 
     const toggleDropdown = (fileId) => {
@@ -37,66 +56,51 @@ const FileList = () => {
         const isActive = activeFileId === file._id;
 
         return (
-            <Draggable key={file._id} draggableId={file._id} index={index}>
-                {(provided) => (
-                    <li
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        className="file-item"
-                    >
-                        <div className="file-preview">
-                            {renderFilePreview(file)}
+            <Draggable key={file._id} axis="both" onStop={(e, data) => handleDragStop(data, index)}>
+                <div className="file-item" style={{ cursor: 'move', padding: '10px', border: '1px solid #ccc', margin: '5px 0' }}>
+                    <div className="file-preview">
+                        {renderFilePreview(file)}
+                    </div>
+                    <p className="file-name">{file.name}</p>
+                    <p className="file-tags">Tags: {file.tags ? file.tags.join(', ') : 'None'}</p>
+                    <p className="file-stats">
+                        Views: {file.views} | Shares: {file.shares}
+                    </p>
+
+                    <FaEllipsisH
+                        onClick={() => toggleDropdown(file._id)}
+                        className="action-icon"
+                        title="More options"
+                    />
+
+                    {isActive && (
+                        <div className="dropdown-menu">
+                            <button
+                                onClick={async () => {
+                                    try {
+                                        const generatedLink = await handleShare(file._id);
+                                        setLink(generatedLink);
+                                        setPopupOpen(true);
+                                    } catch (error) {
+                                        // alert(error.message);
+                                    }
+                                }}
+                            >
+                                Share
+                            </button>
+                            <button onClick={() => handleDelete(file._id)}>Delete</button>
+                            <button onClick={() => alert(`Edit file: ${file.name}`)}>Edit</button>
                         </div>
-                        <p className="file-name">{file.name}</p>
-                        <p className="file-tags">Tags: {file.tags ? file.tags.join(', ') : 'None'}</p>
-                        <p className="file-stats">
-                            Views: {file.views} | Shares: {file.shares} {/* Add views and shares */}
-                        </p>
-
-                        <FaEllipsisH
-                            onClick={() => toggleDropdown(file._id)}
-                            className="action-icon"
-                            title="More options"
-                        />
-
-                        {isActive && (
-                            <div className="dropdown-menu">
-                                <button
-                                    onClick={async () => {
-                                        try {
-                                            const generatedLink = await handleShare(file._id);
-                                            setLink(generatedLink);
-                                            setPopupOpen(true);
-                                        } catch (error) {
-                                            alert(error.message);
-                                        }
-                                    }}
-                                >
-                                    Share
-                                </button>
-                                <button onClick={() => handleDelete(file._id)}>Delete</button>
-                                {/* <button onClick={() => alert(`Edit file: ${file.name}`)}>Edit</button> */}
-                            </div>
-                        )}
-                    </li>
-                )}
+                    )}
+                </div>
             </Draggable>
         );
     };
 
-
     const renderFileList = () => (
-        <DragDropContext onDragEnd={handleDragEnd}>
-            <Droppable droppableId="files">
-                {(provided) => (
-                    <ul ref={provided.innerRef} {...provided.droppableProps} className="file-list">
-                        {files.map(renderFileItem)}
-                        {provided.placeholder}
-                    </ul>
-                )}
-            </Droppable>
-        </DragDropContext>
+        <div className="file-list">
+            {files.map(renderFileItem)}
+        </div>
     );
 
     return (

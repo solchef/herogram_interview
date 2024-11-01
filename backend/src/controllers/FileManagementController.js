@@ -37,9 +37,21 @@ const uploadFile = async (req, res) => {
     }
 
     const { tags } = req.body;
-    
 
     try {
+        // Get existing files and their order
+        const existingFiles = await File.find().sort({ order: 1 });
+        const newFileOrder = existingFiles.length ? existingFiles.length : 0;
+
+        // Check if existing files have an order, if not, set them
+        await Promise.all(existingFiles.map((file, index) => {
+            if (file.order === undefined || file.order === null) {
+                return File.findByIdAndUpdate(file._id, { order: index }, { new: true });
+            }
+            return Promise.resolve(); // Do nothing if order already exists
+        }));
+
+        // Create a new file with the next available order
         const newFile = new File({
             name: req.file.originalname,
             path: req.file.path,
@@ -47,6 +59,7 @@ const uploadFile = async (req, res) => {
             uploadedBy: req.user.id,
             shareableLink: uuidv4(),
             downloads: 0,
+            order: newFileOrder // Set order for the new file
         });
 
         await newFile.save();
@@ -69,7 +82,7 @@ const downloadFile = async (req, res) => {
         }
 
         file.downloads += 1;
-        file.views += 1; 
+        file.views += 1;
         await file.save();
 
         res.download(file.path, file.name);
@@ -86,8 +99,8 @@ const shareFile = async (req, res) => {
             return res.status(404).json({ message: 'File not found' });
         }
 
-        file.shares += 1; 
-        file.downloads += 1; 
+        file.shares += 1;
+        file.downloads += 1;
         await file.save();
 
         res.download(file.path, file.name);
@@ -111,6 +124,31 @@ const getAllFiles = async (req, res) => {
         res.status(500).send('Error fetching files');
     }
 };
+
+const reorderFiles = async (req, res) => {
+    const files = req.body;
+    
+    if (!Array.isArray(files) || files.length === 0) {
+        return res.status(400).json({ message: 'Invalid input, expected an array' });
+    }
+
+    try {
+        // Update the order of each file based on the provided array
+        const updatePromises = files.map((file, index) =>
+            File.findByIdAndUpdate(file._id, { order: index }, { new: true })
+        );
+
+        // Wait for all update operations to complete
+        await Promise.all(updatePromises);
+
+        res.status(200).json({ message: 'Files reordered successfully' });
+    } catch (error) {
+        console.error('Error reordering files:', error);
+        res.status(500).json({ message: 'Failed to reorder files' });
+    }
+};
+
+
 
 const generateShareableLink = async (fileId) => {
     const token = crypto.randomBytes(16).toString('hex');
@@ -158,4 +196,5 @@ module.exports = {
     getAllFiles,
     createShareableLink,
     getFileByShareableLink,
+    reorderFiles
 };

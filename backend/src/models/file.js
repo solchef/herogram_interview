@@ -9,6 +9,8 @@ const fileSchema = new mongoose.Schema({
     downloads: { type: Number, default: 0 },
     views: { type: Number, default: 0 }, // Add views field
     shares: { type: Number, default: 0 }, // Add shares field
+    order: { type: Number }, // Add this field for ordering
+
 }, { timestamps: true });
 
 const File = mongoose.model('File', fileSchema);
