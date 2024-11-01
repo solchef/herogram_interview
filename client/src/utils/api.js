@@ -13,7 +13,7 @@ export const fetchFiles = async () => {
 
 export const generateShareableLink = async (fileId) => {
     const response = await axios.post(
-        `${process.env.REACT_APP_REACT_APP_BACKEND_URL}/api/files/share`,
+        `${process.env.REACT_APP_REACT_APP_BACKEND_URL}/api/files/share/${fileId}`,
         { fileId },
         getAuthHeaders()
     );

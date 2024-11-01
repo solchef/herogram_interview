@@ -28,20 +28,16 @@ const FileList = () => {
         updatedFiles.splice(newIndex, 0, draggedFile);
         reorderFileList(updatedFiles);
 
-        // if (window.confirm("Do you want to save the new order of files?")) {
-            const fileIdsInOrder = updatedFiles.map(file => file._id);
+        const fileIdsInOrder = updatedFiles.map(file => file._id);
 
-            try {
-                await axios.post(`${process.env.REACT_APP_REACT_APP_BACKEND_URL}/api/files/reorder`, {
-                    fileIds: fileIdsInOrder,
-                });
-            } catch (error) {
-                console.error('Error reordering files:', error);
-                reorderFileList(files);
-            }
-        // } else {
-        //     reorderFileList(files);
-        // }
+        try {
+            await axios.post(`${process.env.REACT_APP_REACT_APP_BACKEND_URL}/api/files/reorder`, {
+                fileIds: fileIdsInOrder,
+            });
+        } catch (error) {
+            console.error('Error reordering files:', error);
+            reorderFileList(files);
+        }
     };
 
     const toggleDropdown = (fileId) => {
@@ -57,7 +53,7 @@ const FileList = () => {
 
         return (
             <Draggable key={file._id} axis="both" onStop={(e, data) => handleDragStop(data, index)}>
-                <div className="file-item" style={{ cursor: 'move', padding: '10px', border: '1px solid #ccc', margin: '5px 0' }}>
+                <div className="file-item" style={{ cursor: 'move', padding: '10px', border: '1px solid #ccc', margin: '5px 0', minHeight: "300px" }}>
                     <div className="file-preview">
                         {renderFilePreview(file)}
                     </div>
@@ -66,32 +62,22 @@ const FileList = () => {
                     <p className="file-stats">
                         Views: {file.views} | Shares: {file.shares}
                     </p>
-
-                    <FaEllipsisH
-                        onClick={() => toggleDropdown(file._id)}
-                        className="action-icon"
-                        title="More options"
-                    />
-
-                    {isActive && (
-                        <div className="dropdown-menu">
-                            <button
-                                onClick={async () => {
-                                    try {
-                                        const generatedLink = await handleShare(file._id);
-                                        setLink(generatedLink);
-                                        setPopupOpen(true);
-                                    } catch (error) {
-                                        // alert(error.message);
-                                    }
-                                }}
-                            >
-                                Share
-                            </button>
-                            <button onClick={() => handleDelete(file._id)}>Delete</button>
-                            <button onClick={() => alert(`Edit file: ${file.name}`)}>Edit</button>
-                        </div>
-                    )}
+                    <div className='share-button'>
+                        <button
+                            onClick={async (e) => {
+                                e.stopPropagation(); // Prevent drag event when clicking the button
+                                try {
+                                    const generatedLink = await handleShare(file._id);
+                                    setLink(generatedLink);
+                                    setPopupOpen(true);
+                                } catch (error) {
+                                    // Handle error (e.g., alert error.message)
+                                }
+                            }}
+                        >
+                            Share
+                        </button>
+                    </div>
                 </div>
             </Draggable>
         );
