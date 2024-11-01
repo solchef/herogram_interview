@@ -11,7 +11,7 @@ const Register = () => {
     const handleRegister = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/auth/register`, { email, password });
+            const response = await axios.post(`${process.env.REACT_APP_REACT_APP_BACKEND_URL}/api/auth/register`, { email, password });
             console.log(response.data);
             // Optionally log in the user after registration
             // login(response.data.token); // Uncomment if you want to log in the user immediately after registering
