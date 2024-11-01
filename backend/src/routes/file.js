@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const File = require('../models/File'); // Import the File model
-const User = require('../models/user'); // Assuming you have a User model
+const User = require('../models/User'); // Assuming you have a User model
 const { v4: uuidv4 } = require('uuid'); // For generating unique shareable links
 const jwt = require('jsonwebtoken');
 const router = express.Router();
@@ -115,15 +115,21 @@ router.get('/share/:link', async (req, res) => {
     }
 });
 
-// Route to get file statistics, including uploaded by
 router.get('/', async (req, res) => {
     try {
-        const files = await File.find().populate('uploadedBy', 'email'); // Populate user email
-        res.status(200).json(files);
+        const files = await File.find(); // Fetch files from the database
+        const filesWithUrls = files.map(file => ({
+            ...file.toObject(),
+            // Use encodeURIComponent to encode the filename
+            path: `${req.protocol}://${req.get('host')}/uploads/${encodeURIComponent(file.name)}`, // Adjust as necessary
+            thumbnail: `${req.protocol}://${req.get('host')}/uploads/${encodeURIComponent(file.name)}`, // Adjust as necessary
+        }));
+        res.json(filesWithUrls);
     } catch (error) {
-        console.error('Error fetching files:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        res.status(500).send('Error fetching files');
     }
 });
+
+
 
 module.exports = router;

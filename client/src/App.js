@@ -5,8 +5,8 @@ import Layout from './components/Layout/Layout';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import FileUpload from './components/FileUpload';
-import FileList from './components/FileList';
 import { AuthProvider } from './context/AutContext';
+import FileList from './components/FileList';
 
 const App = () => {
     return (

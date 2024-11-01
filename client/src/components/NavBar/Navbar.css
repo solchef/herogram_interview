@@ -5,6 +5,12 @@ nav {
     padding: 1rem;
 }
 
+.navbar-content {
+    display: flex;
+    justify-content: space-between; /* Space between title and menu items */
+    align-items: center; /* Center items vertically */
+}
+
 nav h1 {
     color: #fff;
     margin: 0;

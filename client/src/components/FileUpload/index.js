@@ -5,6 +5,7 @@ import './FileUpload.css'; // Import the CSS file
 const FileUpload = () => {
     const [file, setFile] = useState(null);
     const [message, setMessage] = useState('');
+    const [tags, setTags] = useState(''); // State for tags
     const [dragging, setDragging] = useState(false); // State to manage drag-and-drop effect
 
     const handleFileChange = (event) => {
@@ -35,9 +36,10 @@ const FileUpload = () => {
 
         const formData = new FormData();
         formData.append('file', file);
+        formData.append('tags', tags); // Append tags to form data
 
-        // Retrieve token from local storage or state management (adjust as necessary)
-        const token = localStorage.getItem('token'); // Assuming your token is stored in local storage
+        // Retrieve token from local storage
+        const token = localStorage.getItem('token');
 
         try {
             const response = await axios.post(
@@ -51,10 +53,16 @@ const FileUpload = () => {
                 }
             );
             setMessage(response.data.message);
+            setFile(null); // Reset file input after upload
+            setTags(''); // Reset tags input after upload
         } catch (error) {
             console.error('Error uploading file:', error);
             setMessage('Error uploading file.');
         }
+    };
+
+    const handleAreaClick = () => {
+        document.getElementById('file-input').click(); // Trigger file input click
     };
 
     return (
@@ -65,14 +73,26 @@ const FileUpload = () => {
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
+                onClick={handleAreaClick} // Trigger file input on area click
             >
                 {file ? (
                     <p>{file.name}</p>
                 ) : (
                     <p>Drag & drop your file here or click to select</p>
                 )}
-                <input type="file" onChange={handleFileChange} />
+                <input
+                    id="file-input" // Add an id for programmatic click
+                    type="file"
+                    onChange={handleFileChange}
+                    style={{ display: 'none' }} // Hide the default file input
+                />
             </div>
+            <input
+                type="text"
+                placeholder="Enter tags (comma separated)"
+                value={tags}
+                onChange={(e) => setTags(e.target.value)} // Handle tag input change
+            />
             <button className="upload-button" onClick={handleUpload}>Upload</button>
             {message && <p className="upload-message">{message}</p>}
         </div>

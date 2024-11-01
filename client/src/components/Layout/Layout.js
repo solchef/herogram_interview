@@ -11,7 +11,7 @@ const Layout = ({ children }) => {
                 {children}
             </main>
             <footer className="footer">
-                <p>&copy; 2024 Your Company Name. All rights reserved.</p>
+                <p>&copy; 2024 James Waweru Chege. Herogram Interview.</p>
             </footer>
         </div>
     );

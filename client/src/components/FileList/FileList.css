@@ -1,0 +1,38 @@
+.file-list {
+    list-style: none;
+    padding: 0;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.file-thumbnail, .file-video {
+    width: 100px; /* Set width as per your layout */
+    height: auto;
+    margin-right: 10px;
+}
+
+.file-name {
+    flex-grow: 1; /* Allow the name to take available space */
+}
+
+.file-actions {
+    display: flex;
+    align-items: center;
+}
+
+.action-icon {
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.delete-button {
+    color: red;
+    cursor: pointer;
+}
