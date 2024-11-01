@@ -1,0 +1,42 @@
+/* src/components/NavBar.css */
+
+nav {
+    background-color: #333;
+    padding: 1rem;
+}
+
+nav h1 {
+    color: #fff;
+    margin: 0;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 1rem; /* Adjust the spacing between the links */
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+nav a:hover {
+    color: #00bcd4; /* Change color on hover */
+}
+
+nav button {
+    background-color: #ff4d4d; /* Logout button color */
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+nav button:hover {
+    background-color: #ff1a1a; /* Change button color on hover */
+}

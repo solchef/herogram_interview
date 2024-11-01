@@ -1,0 +1,62 @@
+/* src/components/Layout.css */
+
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa; /* Light background color for the app */
+}
+
+.layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1; /* This will allow the main content area to grow and fill the space */
+    padding: 20px;
+    background-color: #ffffff; /* White background for main content */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    border-radius: 8px; /* Rounded corners */
+    margin: 20px; /* Margin around the main content */
+}
+
+.footer {
+    background-color: #343a40; /* Dark footer background */
+    color: white; /* White text color for contrast */
+    text-align: center;
+    padding: 10px 0;
+}
+
+.footer p {
+    margin: 0; /* Remove default margin */
+}
+
+/* Navbar Styles */
+.navbar {
+    background-color: #007bff; /* Blue background for navbar */
+    padding: 10px;
+    color: white;
+}
+
+.navbar a {
+    color: white; /* White link color */
+    text-decoration: none; /* Remove underline from links */
+    margin-right: 15px; /* Space between links */
+}
+
+.navbar a:hover {
+    text-decoration: underline; /* Underline effect on hover */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .layout {
+        padding: 0;
+    }
+
+    .main-content {
+        margin: 10px; /* Reduce margin on small screens */
+        padding: 15px; /* Reduce padding on small screens */
+    }
+}
