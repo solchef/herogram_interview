@@ -12,10 +12,16 @@ const FileList = () => {
     const [activeFileId, setActiveFileId] = useState(null);
     const [isPopupOpen, setPopupOpen] = useState(false);
     const [link, setLink] = useState('');
+    const [isDragging, setIsDragging] = useState(false); // State to track dragging
 
     const closePopup = () => setPopupOpen(false);
 
+    const handleDragStart = () => {
+        setIsDragging(true); // Set dragging to true on drag start
+    };
+
     const handleDragStop = async (data, index) => {
+        setIsDragging(false); // Reset dragging state
         const updatedFiles = [...files];
         const draggedFile = updatedFiles.splice(index, 1)[0];
 
@@ -26,17 +32,21 @@ const FileList = () => {
         );
 
         updatedFiles.splice(newIndex, 0, draggedFile);
-        reorderFileList(updatedFiles);
 
-        const fileIdsInOrder = updatedFiles.map(file => file._id);
+        // Only reorder files if the user was dragging
+        if (isDragging) {
+            reorderFileList(updatedFiles);
 
-        try {
-            await axios.post(`${process.env.REACT_APP_REACT_APP_BACKEND_URL}/api/files/reorder`, {
-                fileIds: fileIdsInOrder,
-            });
-        } catch (error) {
-            console.error('Error reordering files:', error);
-            reorderFileList(files);
+            const fileIdsInOrder = updatedFiles.map(file => file._id);
+
+            try {
+                await axios.post(`${process.env.REACT_APP_REACT_APP_BACKEND_URL}/api/files/reorder`, {
+                    fileIds: fileIdsInOrder,
+                });
+            } catch (error) {
+                console.error('Error reordering files:', error);
+                reorderFileList(files);
+            }
         }
     };
 
@@ -52,7 +62,12 @@ const FileList = () => {
         const isActive = activeFileId === file._id;
 
         return (
-            <Draggable key={file._id} axis="both" onStop={(e, data) => handleDragStop(data, index)}>
+            <Draggable
+                key={file._id}
+                axis="both"
+                onStart={handleDragStart} // Track when dragging starts
+                onStop={(e, data) => handleDragStop(data, index)}
+            >
                 <div className="file-item" style={{ cursor: 'move', padding: '10px', border: '1px solid #ccc', margin: '5px 0', minHeight: "300px" }}>
                     <div className="file-preview">
                         {renderFilePreview(file)}
@@ -68,9 +83,13 @@ const FileList = () => {
                                 e.stopPropagation(); // Prevent drag event when clicking the button
                                 try {
                                     const generatedLink = await handleShare(file._id);
-                                    setLink(generatedLink);
+                                    setLink(`${process.env.REACT_APP_REACT_APP_BACKEND_URL+'/uploads/'+file.shareableLink}`);
                                     setPopupOpen(true);
                                 } catch (error) {
+                                    // setPopupOpen(true);
+
+                                    // alert(error)
+
                                     // Handle error (e.g., alert error.message)
                                 }
                             }}

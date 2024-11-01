@@ -94,7 +94,7 @@ const downloadFile = async (req, res) => {
 
 const shareFile = async (req, res) => {
     try {
-        const file = await File.findOne({ shareableLink: req.params.link });
+        const file = await File.findById(req.params.link);
         if (!file) {
             return res.status(404).json({ message: 'File not found' });
         }
@@ -103,7 +103,13 @@ const shareFile = async (req, res) => {
         file.downloads += 1;
         await file.save();
 
-        res.download(file.path, file.name);
+        // res.download(file.path, file.name);
+        res.status(200).json({
+            message: 'File Link fetched',
+            file: file.path,
+            name:file.name
+
+        });
     } catch (error) {
         console.error('Error accessing shared file:', error);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -127,7 +133,7 @@ const getAllFiles = async (req, res) => {
 
 const reorderFiles = async (req, res) => {
     const files = req.body;
-    
+
     if (!Array.isArray(files) || files.length === 0) {
         return res.status(400).json({ message: 'Invalid input, expected an array' });
     }
