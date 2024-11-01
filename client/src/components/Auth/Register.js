@@ -1,20 +1,22 @@
 // src/components/Auth/Register.js
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import './Auth.css'; // Make sure to import the CSS file
 
 const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    // const { login } = useAuth(); // Assuming you have a login function
+    const [name, setName] = useState('');
+    const navigate = useNavigate(); // Initialize useNavigate
 
     const handleRegister = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`${process.env.REACT_APP_REACT_APP_BACKEND_URL}/api/auth/register`, { email, password });
-            console.log(response.data);
-            // Optionally log in the user after registration
-            // login(response.data.token); // Uncomment if you want to log in the user immediately after registering
+            const response = await axios.post(`${process.env.REACT_APP_REACT_APP_BACKEND_URL}/api/users/register`, { email, name, password });
+            console.log('Registration successful:', response.data);
+            // Redirect to login page after successful registration
+            navigate('/login'); // Redirect to the login page
         } catch (error) {
             console.error('Error registering:', error);
         }
@@ -27,8 +29,8 @@ const Register = () => {
                 <input 
                     type="text" 
                     placeholder="Name" 
-                    value={email} 
-                    onChange={(e) => setEmail(e.target.value)} 
+                    value={name} 
+                    onChange={(e) => setName(e.target.value)} 
                     required 
                 />
                 <input 
