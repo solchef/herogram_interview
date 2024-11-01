@@ -182,7 +182,7 @@ const getFileByShareableLink = async (req, res) => {
         if (!file) {
             return res.status(404).json({ message: 'File not found' });
         }
-        res.json(file);
+        res.download(file.path);
     } catch (error) {
         console.error('Error fetching file by link:', error);
         res.status(500).json({ message: 'Failed to fetch file.' });
